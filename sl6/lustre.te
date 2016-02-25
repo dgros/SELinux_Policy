@@ -1,0 +1,41 @@
+
+policy_module(lustre,1.0.2)
+
+
+type lustre_home_t;
+type lustre_t;
+
+require {
+	type sysadm_t, security_t, mount_t;
+	type unlabeled_t, fs_t;
+}
+
+allow  sysadm_t lustre_home_t:file { read getattr open write execute } ;
+allow  sysadm_t lustre_t:file { read getattr open write execute } ;
+allow  sysadm_t lustre_home_t:dir { read getattr open write execute } ;
+allow  sysadm_t unlabeled_t:file { read getattr open write execute } ;
+
+
+## Audit2Allow
+
+allow mount_t unlabeled_t:lnk_file read;
+allow sysadm_t lustre_home_t:dir search;
+allow sysadm_t unlabeled_t:file write;
+allow sysadm_t unlabeled_t:file relabelfrom;
+allow sysadm_t lustre_home_t:dir add_name;
+allow sysadm_t lustre_home_t:file create;
+allow sysadm_t unlabeled_t:file create;
+
+
+allow mount_t lustre_home_t:dir { getattr mounton };
+
+
+allow lustre_home_t fs_t:filesystem  { associate };
+allow sysadm_t unlabeled_t:file  { write };
+allow sysadm_t unlabeled_t:file { relabelto };
+allow sysadm_t lustre_t:file { relabelto };
+
+allow lustre_t fs_t:filesystem  { associate };
+
+
+

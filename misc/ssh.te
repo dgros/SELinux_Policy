@@ -1,0 +1,39 @@
+
+policy_module(ssh,1.0.0)
+
+########################################
+#
+# Declarations
+#
+require { 
+	type sshd_t,admin_home_t,audisp_exec_t,auditctl_exec_t;
+	type sysadm_t, auditd_exec_t, dmesg_exec_t, hostname_exec_t;
+	type kernel_t, load_policy_exec_t, security_t, semanage_exec_t;
+	type semanage_read_lock_t, semanage_store_t, shell_exec_t; 
+};
+
+########################################
+#
+# ssh local policy
+#
+
+allow sshd_t sysadm_t:process transition;
+type_transition sshd_t shell_exec_t:process sysadm_t; 
+
+allow sshd_t admin_home_t:file { read getattr open };
+allow sshd_t audisp_exec_t:file { read getattr execute };
+allow sshd_t auditctl_exec_t:file { read getattr execute };
+allow sshd_t auditd_exec_t:file { read getattr execute };
+allow sshd_t dmesg_exec_t:file { read execute open execute_no_trans };
+allow sshd_t hostname_exec_t:file { read execute open execute_no_trans };
+allow sshd_t kernel_t:system syslog_read;
+allow sshd_t load_policy_exec_t:file execute;
+allow sshd_t security_t:security setenforce;
+allow sshd_t self:process setpgid;
+allow sshd_t semanage_exec_t:file { read getattr open execute execute_no_trans };
+allow sshd_t semanage_read_lock_t:file { read lock open };
+allow sshd_t semanage_store_t:dir { read write search open };
+allow sshd_t semanage_store_t:file { read getattr open };
+#allow sshd_t shell_exec_t:file execute_no_trans;
+
+allow sshd_t kernel_t:system module_request;

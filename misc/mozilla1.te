@@ -1,0 +1,57 @@
+
+policy_module(mozilla1,1.0.0)
+
+########################################
+#
+# Declarations
+#
+require { 
+	type mozilla_exec_t, kernel_t;
+	type user_t, tmpfs_t, pulseaudio_home_t;
+	type user_mozilla_t;
+	type mozilla_t, tmp_t, user_tmp_t, user_home_t, xserver_t;
+};
+
+########################################
+#
+# mozilla transition
+#
+
+role user_r types user_mozilla_t;
+
+type_transition user_t mozilla_exec_t:process user_mozilla_t;
+
+allow user_mozilla_t user_home_t:dir{ write read search getattr };
+allow user_mozilla_t user_home_t:file{ write read getattr };
+
+
+allow user_t mozilla_exec_t:file { getattr read write execute entrypoint };
+allow user_t user_mozilla_t:process transition;
+allow user_t user_mozilla_t:fd use;
+allow user_t user_mozilla_t:process sigchld;
+allow user_mozilla_t user_t:fd use;
+
+allow mozilla_t user_t:process sigchld;
+allow user_t mozilla_t:process { siginh rlimitinh };
+
+allow mozilla_t tmp_t:dir { read write };
+allow mozilla_t user_tmp_t:dir getattr;
+allow mozilla_t user_tmp_t:dir setattr;
+allow user_t mozilla_t:process noatsecure;
+
+allow mozilla_t user_home_t:dir{ read write getattr };
+allow mozilla_t user_home_t:file{ read write getattr };
+allow mozilla_t user_t:unix_stream_socket connectto;
+allow xserver_t mozilla_t:dir search;
+
+allow xserver_t mozilla_t:lnk_file read;
+allow xserver_t mozilla_t:file read;
+
+#allow mozilla_t pulseaudio_home_t:dir setattr;
+allow mozilla_t self:unix_dgram_socket sendto;
+allow mozilla_t tmpfs_t:filesystem getattr;
+allow mozilla_t user_tmp_t:dir search;
+allow mozilla_t user_tmp_t:dir write;
+
+
+

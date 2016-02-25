@@ -1,0 +1,41 @@
+policy_module(piga_tcp,1.0.0)
+
+########################################
+#
+# Declarations
+#
+require { 
+	type sysadm_t, auditadm_t, usr_t, user_tty_device_t;
+	type proc_t, net_conf_t, port_t;
+	attribute domain;
+};
+
+type audit_piga_t, domain;
+type audit_piga_exec_t, domain;
+########################################
+#
+# audit_piga transition
+#
+role sysadm_r types audit_piga_t;
+type_transition sysadm_t audit_piga_exec_t:process audit_piga_t;
+
+#============= audit_piga_t ==============
+allow audit_piga_t audit_piga_exec_t:file entrypoint;
+allow audit_piga_t net_conf_t:file { read open getattr };
+allow audit_piga_t proc_t:file { getattr read open write };
+allow audit_piga_t self:tcp_socket { connect create setopt write read };
+allow audit_piga_t port_t:tcp_socket name_connect;
+allow audit_piga_t sysadm_t:process sigchld;
+allow audit_piga_t user_tty_device_t:chr_file { getattr read write append ioctl};
+
+##============= auditadm_t ==============
+allow auditadm_t usr_t:dir write;
+allow auditadm_t usr_t:file write;
+
+##============= sysadm_t ==============
+allow sysadm_t audit_piga_exec_t:file execute;
+allow sysadm_t audit_piga_t:process { siginh transition rlimitinh noatsecure };
+
+##============= ROLES ==============
+role sysadm_r types audit_piga_t;
+

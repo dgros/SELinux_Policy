@@ -1,0 +1,18 @@
+
+policy_module(rsyslog,1.0.0)
+
+########################################
+#
+# Declarations
+#
+require { 
+	type syslogd_t; 
+	type port_t;
+};
+
+########################################
+#
+# Rsyslog local policy
+#
+
+allow syslogd_t port_t:tcp_socket name_connect;

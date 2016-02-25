@@ -1,0 +1,2 @@
+/lustre		system_u:object_r:lustre_home_t:s0
+/lustre(/.*)?	system_u:object_r:lustre_t:s0

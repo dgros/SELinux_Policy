@@ -1,0 +1,7 @@
+policy_module(setenforce,1.0.0)
+
+require {
+	type sysadm_t, security_t;
+}
+
+allow sysadm_t security_t: security { load_policy setenforce };

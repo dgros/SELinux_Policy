@@ -1,0 +1,13 @@
+policy_module(audit,1.0.0.1)
+
+require{
+
+	type auditd_t, unlabeled_t,device_t, sysadm_t, var_log_t, auditd_log_t;
+}
+
+
+allow auditd_t device_t:sock_file write;
+allow auditd_t unlabeled_t:file getattr;
+allow sysadm_t var_log_t:file { append write };
+allow sysadm_t auditd_log_t:dir {search append write read};
+

@@ -1,0 +1,19 @@
+
+policy_module(tcp,1.0.0)
+
+########################################
+#
+# Declarations
+#
+require { 
+	type admin_home_t,sysadm_t,mount_t,home_root_t,kernel_t;
+	type iptables_t, devpts_t;
+};
+
+########################################
+#
+# tcp local policy
+#
+
+allow sysadm_t admin_home_t:file execute;
+allow sysadm_t admin_home_t:file execute_no_trans;

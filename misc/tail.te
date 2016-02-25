@@ -1,0 +1,67 @@
+policy_module(tail,1.0.0)
+
+########################################
+#
+# Declarationmail_spool_ts
+#
+require { 
+	type sysadm_t, user_tty_device_t, locale_t,newrole_t,shell_exec_t;
+	type admin_home_t, etc_t, proc_t, bin_t, var_spool_t, usr_t;
+	type hostname_exec_t, consoletype_exec_t, newrole_exec_t, security_t;
+	type mail_spool_t, var_log_t, var_t, consolekit_log_t, faillog_t;
+	type xserver_log_t, inotifyfs_t, audit_piga_exec_t, sysctl_t;
+	type fs_t;
+	attribute domain;
+};
+
+type tail_sysadm_t, domain;
+########################################
+#
+# tail_sysadm_t transition
+#
+role sysadm_r types tail_sysadm_t;
+
+#============= tail_sysadm_t ==============
+allow sysadm_t tail_sysadm_t:process transition;
+
+allow tail_sysadm_t fs_t:filesystem getattr;
+allow tail_sysadm_t admin_home_t:dir { getattr search };
+allow tail_sysadm_t admin_home_t:file { read open getattr };
+allow tail_sysadm_t bin_t:dir read;
+allow tail_sysadm_t bin_t:file { execute getattr read open execute_no_trans };
+allow tail_sysadm_t etc_t:file { read open getattr ioctl };
+allow tail_sysadm_t locale_t:dir search;
+allow tail_sysadm_t locale_t:file { read open getattr };
+allow tail_sysadm_t newrole_t:process sigchld;
+allow tail_sysadm_t proc_t:file { read open getattr write };
+allow tail_sysadm_t proc_t:dir { read open getattr write };
+allow tail_sysadm_t self:fifo_file { read write getattr ioctl };
+allow tail_sysadm_t self:netlink_audit_socket { create write nlmsg_relay };
+allow tail_sysadm_t self:process { signal setpgid };
+allow tail_sysadm_t shell_exec_t:file entrypoint;
+allow tail_sysadm_t user_tty_device_t:chr_file { write read ioctl getattr };
+allow tail_sysadm_t var_spool_t:dir search;
+allow tail_sysadm_t usr_t:lnk_file read;
+allow tail_sysadm_t hostname_exec_t:file { read open execute getattr execute_no_trans };
+allow tail_sysadm_t consoletype_exec_t:file { execute_no_trans read open execute getattr };
+allow tail_sysadm_t mail_spool_t:dir search;
+allow tail_sysadm_t mail_spool_t:file getattr;
+allow tail_sysadm_t newrole_exec_t:file { execute_no_trans open getattr read execute };
+allow tail_sysadm_t security_t:file write;
+allow tail_sysadm_t self:capability audit_write;
+allow tail_sysadm_t var_log_t:dir { open read getattr search };
+allow tail_sysadm_t var_log_t:file { open read getattr };
+allow tail_sysadm_t var_t:dir read;
+allow tail_sysadm_t consolekit_log_t:dir getattr;
+allow tail_sysadm_t faillog_t:file getattr;
+allow tail_sysadm_t inotifyfs_t:dir read;
+allow tail_sysadm_t self:capability { setuid dac_override };
+allow tail_sysadm_t self:process getcap;
+allow tail_sysadm_t xserver_log_t:file getattr;
+allow tail_sysadm_t audit_piga_exec_t:file getattr;
+allow tail_sysadm_t sysctl_t:dir { read open write getattr };
+allow tail_sysadm_t sysctl_t:file { read open write getattr };
+
+#============= newrole_t ==============
+allow newrole_t tail_sysadm_t:process { siginh rlimitinh noatsecure transition };
+

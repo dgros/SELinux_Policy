@@ -1,0 +1,8 @@
+policy_module(udev, 1.0.0)
+
+require {
+	type udev_t, sysadm_t;
+	
+}
+
+allow udev_t sysadm_t:unix_dgram_socket sendto;

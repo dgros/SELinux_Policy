@@ -1,0 +1,21 @@
+
+
+policy_module(sysadm, 1.0.0.1)
+
+require {
+	type  sysadm_t, event_device_t,auditd_log_t,proc_kmsg_t,var_log_t, unlabeled_t;
+}
+
+allow sysadm_t auditd_log_t:file append;
+allow sysadm_t event_device_t:chr_file read;
+allow sysadm_t proc_kmsg_t:file read;
+allow sysadm_t self:netlink_audit_socket nlmsg_write;
+allow sysadm_t var_log_t:file append;
+
+allow sysadm_t proc_kmsg_t:file read;
+allow sysadm_t self:capability audit_control;
+allow sysadm_t unlabeled_t:file append;
+
+allow sysadm_t self:capability audit_control;
+allow sysadm_t self:netlink_selinux_socket read;
+
