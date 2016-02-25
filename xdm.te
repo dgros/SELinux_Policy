@@ -1,0 +1,42 @@
+
+module xdm 1.0;
+
+require {
+	type xdm_exec_t;
+	type xdm_tmp_t;
+	type xdm_var_lib_t;
+	type system_dbusd_t;
+	type devicekit_power_t;
+	type user_t;
+	type apmd_t;
+	type user_gkeyringd_t;
+	type xdm_t;
+	type netutils_t;
+	class process transition;
+	class unix_stream_socket connectto;
+	class file { read lock create write getattr link unlink open };
+	class sock_file { create unlink };
+	class lnk_file read;
+	class dir { setattr read write getattr remove_name open add_name };
+}
+
+allow apmd_t xdm_t:unix_stream_socket connectto;
+
+allow devicekit_power_t xdm_exec_t:file getattr;
+
+
+allow netutils_t xdm_tmp_t:dir { write getattr add_name };
+allow netutils_t xdm_tmp_t:sock_file create;
+
+allow netutils_t xdm_var_lib_t:dir { write getattr setattr read remove_name open add_name };
+
+allow netutils_t xdm_var_lib_t:file { read lock create write getattr link unlink open };
+allow netutils_t xdm_var_lib_t:lnk_file read;
+allow system_dbusd_t xdm_var_lib_t:dir getattr;
+allow system_dbusd_t xdm_var_lib_t:file { read write getattr open };
+allow system_dbusd_t xdm_var_lib_t:lnk_file read;
+allow user_t xdm_tmp_t:sock_file unlink;
+allow user_t xdm_var_lib_t:dir { write remove_name add_name setattr };
+allow user_t xdm_var_lib_t:file { write link read lock create unlink open };
+allow user_t xdm_var_lib_t:lnk_file read;
+allow xdm_t user_gkeyringd_t:process transition;

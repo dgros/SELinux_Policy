@@ -1,0 +1,11 @@
+
+policy_module(colord_perso,1.0.0)
+
+require {
+	type user_home_t;
+	type colord_t;
+	class file { read getattr };
+}
+
+#============= colord_t ==============
+allow colord_t user_home_t:file { read getattr };

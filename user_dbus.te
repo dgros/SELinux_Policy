@@ -1,0 +1,86 @@
+
+policy_module(user_dbus_perso,1.0.0)
+
+require {
+	type user_home_t;
+	type syslogd_t;
+	type user_dbusd_t;
+	type sysfs_t;
+	type xauth_home_t;
+	type system_dbusd_t;
+	type telepathy_mission_control_exec_t;
+	type system_dbusd_var_run_t;
+	type gconf_home_t;
+	type xdm_var_run_t;
+	type gconf_etc_t;
+	type lib_t;
+	type xserver_t;
+	type telepathy_mission_control_data_home_t;
+	type telepathy_mission_control_home_t;
+	type var_lib_t;
+	type sysctl_crypto_t;
+	type gconfd_exec_t;
+	type user_gkeyringd_t;
+	type random_device_t;
+	class unix_stream_socket connectto;
+	class chr_file read;
+	class file { rename execute setattr read create execute_no_trans write getattr unlink open append };
+	class sock_file write;
+	class unix_dgram_socket sendto;
+	class dir { search read write getattr remove_name open add_name };
+}
+
+#============= user_dbusd_t ==============
+allow user_dbusd_t gconf_etc_t:dir { read search open getattr };
+allow user_dbusd_t gconf_etc_t:file { read getattr open };
+#!!!! The source type 'user_dbusd_t' can write to a 'dir' of the following types:
+# session_dbusd_home_t, session_dbusd_tmp_t, user_home_dir_t, tmp_t
+
+allow user_dbusd_t gconf_home_t:dir { write getattr read remove_name open add_name };
+#!!!! The source type 'user_dbusd_t' can write to a 'file' of the following types:
+# session_dbusd_home_t, session_dbusd_tmp_t
+
+allow user_dbusd_t gconf_home_t:file { rename setattr read create write getattr unlink open };
+allow user_dbusd_t gconfd_exec_t:file { read execute open execute_no_trans };
+allow user_dbusd_t lib_t:file execute_no_trans;
+#!!!! This avc can be allowed using the boolean 'authlogin_nsswitch_use_ldap'
+
+allow user_dbusd_t random_device_t:chr_file read;
+allow user_dbusd_t self:unix_stream_socket connectto;
+allow user_dbusd_t sysctl_crypto_t:dir search;
+allow user_dbusd_t sysctl_crypto_t:file { read getattr open };
+allow user_dbusd_t sysfs_t:dir { search getattr };
+#!!!! This avc is a constraint violation.  You will need to add an attribute to either the source or target type to make it work.
+#Constraint rule: 
+allow user_dbusd_t syslogd_t:unix_dgram_socket sendto;
+allow user_dbusd_t system_dbusd_t:unix_stream_socket connectto;
+allow user_dbusd_t system_dbusd_var_run_t:dir search;
+allow user_dbusd_t system_dbusd_var_run_t:sock_file write;
+#!!!! The source type 'user_dbusd_t' can write to a 'dir' of the following types:
+# session_dbusd_home_t, session_dbusd_tmp_t, user_home_dir_t, tmp_t
+
+allow user_dbusd_t telepathy_mission_control_data_home_t:dir { write remove_name search add_name };
+#!!!! The source type 'user_dbusd_t' can write to a 'file' of the following types:
+# session_dbusd_home_t, session_dbusd_tmp_t
+
+allow user_dbusd_t telepathy_mission_control_data_home_t:file { rename write getattr read create unlink open };
+allow user_dbusd_t telepathy_mission_control_exec_t:file { read execute open execute_no_trans };
+allow user_dbusd_t telepathy_mission_control_home_t:file { read getattr open };
+allow user_dbusd_t user_gkeyringd_t:unix_stream_socket connectto;
+#!!!! The source type 'user_dbusd_t' can write to a 'dir' of the following types:
+# session_dbusd_home_t, session_dbusd_tmp_t, user_home_dir_t, tmp_t
+
+allow user_dbusd_t user_home_t:dir { write search read remove_name getattr add_name };
+#!!!! The source type 'user_dbusd_t' can write to a 'file' of the following types:
+# session_dbusd_home_t, session_dbusd_tmp_t
+
+allow user_dbusd_t user_home_t:file { rename write getattr read create unlink open };
+allow user_dbusd_t user_home_t:sock_file write;
+allow user_dbusd_t var_lib_t:file { read getattr open };
+allow user_dbusd_t xauth_home_t:file { read append };
+allow user_dbusd_t xdm_var_run_t:dir search;
+allow user_dbusd_t xdm_var_run_t:file { read getattr open };
+allow user_dbusd_t xserver_t:unix_stream_socket connectto;
+
+#============= user_gkeyringd_t ==============
+allow user_gkeyringd_t user_dbusd_t:unix_stream_socket connectto;

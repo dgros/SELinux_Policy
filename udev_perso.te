@@ -1,0 +1,39 @@
+
+policy_module(udev_perso,1.0.0)
+require {
+	type udev_t;
+	type udev_tbl_t;
+	type devicekit_power_t;
+	type fixed_disk_device_t;
+	type syslogd_t;
+	type cupsd_config_t;
+	type udev_exec_t;
+	type user_t;
+	type system_dbusd_t;
+	class blk_file getattr;
+	class unix_dgram_socket sendto;
+	class fd use;
+	class file { getattr read open execute execute_no_trans };
+	class dir { search read create write getattr remove_name open add_name };
+}
+
+#============= cupsd_config_t ==============
+#!!!! This avc is a constraint violation.  You will need to add an attribute to either the source or target type to make it work.
+#Constraint rule: 
+allow cupsd_config_t syslogd_t:unix_dgram_socket sendto;
+
+#============= devicekit_power_t ==============
+allow devicekit_power_t fixed_disk_device_t:blk_file getattr;
+allow devicekit_power_t udev_exec_t:file { read getattr open execute execute_no_trans };
+
+#============= udev_t ==============
+allow udev_t system_dbusd_t:fd use;
+#!!!! The source type 'udev_t' can write to a 'dir' of the following types:
+# xend_var_log_t, device_t, udev_var_run_t
+
+allow udev_t udev_tbl_t:dir { search read create write getattr remove_name open add_name };
+
+#============= user_t ==============
+#!!!! This avc is allowed in the current policy
+
+allow user_t udev_tbl_t:file { read open };

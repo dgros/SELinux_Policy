@@ -1,0 +1,92 @@
+
+policy_module(user_perso,1.0.0)
+
+require {
+	type xdm_var_lib_t;
+	type syslogd_t;
+	type user_home_t;
+	type xauth_home_t;
+	type mozilla_plugin_t;
+	type semanage_trans_lock_t;
+	type pulseaudio_home_t;
+	type file_context_t;
+	type semanage_read_lock_t;
+	type user_tmp_t;
+	type mount_var_run_t;
+	type udev_tbl_t;
+	type xdm_tmp_t;
+	type ssh_t;
+	type user_home_dir_t;
+	type selinux_config_t;
+	type devlog_t;
+	type user_t;
+	type sysctl_crypto_t;
+	type rtkit_daemon_t;
+	type user_gkeyringd_t;
+	type tmpfs_t;
+	type xserver_log_t;
+	type user_dbusd_t;
+	type NetworkManager_t;
+	type colord_t;
+	type avahi_t;
+	type xdm_t;
+	class process { setsched signull execmem };
+	class unix_stream_socket connectto;
+	class netlink_kobject_uevent_socket { read bind create setopt getattr };
+	class file { rename setattr read lock create getattr write relabelfrom ioctl link relabelto unlink open };
+	class sock_file { write unlink };
+	class lnk_file { read rename create unlink };
+	class unix_dgram_socket sendto;
+	class dir { search setattr create write rmdir remove_name add_name };
+	class dbus { send_msg };
+}
+allow mozilla_plugin_t user_t:process signull;
+allow mozilla_plugin_t user_t:unix_stream_socket connectto;
+
+allow rtkit_daemon_t user_t:process setsched;
+
+allow ssh_t user_tmp_t:file write;
+
+allow user_gkeyringd_t user_t:dir search;
+allow user_gkeyringd_t user_t:file read;
+allow user_gkeyringd_t user_t:lnk_file read;
+
+allow user_t devlog_t:sock_file write;
+allow user_t file_context_t:dir { write remove_name add_name };
+allow user_t file_context_t:file { rename write setattr relabelfrom relabelto create unlink };
+allow user_t mount_var_run_t:file { read open };
+allow user_t mozilla_plugin_t:process signull;
+
+allow user_t pulseaudio_home_t:dir { write remove_name add_name setattr };
+
+allow user_t pulseaudio_home_t:file { read write open lock };
+allow user_t pulseaudio_home_t:lnk_file { read rename create unlink };
+allow user_t self:netlink_kobject_uevent_socket { read bind create setopt getattr };
+
+allow user_t self:process execmem;
+
+allow user_t selinux_config_t:dir { write remove_name create add_name rmdir };
+allow user_t selinux_config_t:file { write rename create unlink };
+allow user_t semanage_read_lock_t:file read;
+allow user_t semanage_trans_lock_t:file { read lock open };
+allow user_t sysctl_crypto_t:dir search;
+allow user_t sysctl_crypto_t:file { read getattr open };
+allow user_t syslogd_t:unix_dgram_socket sendto;
+allow user_t tmpfs_t:file read;
+allow user_t udev_tbl_t:file { read open };
+allow user_t user_home_dir_t:dir { write remove_name add_name };
+allow user_t user_home_t:file { read open };
+allow user_t xauth_home_t:file relabelfrom;
+allow user_t xdm_tmp_t:sock_file unlink;
+
+allow user_t xdm_var_lib_t:dir { write remove_name add_name setattr };
+
+allow user_t xdm_var_lib_t:file { write link read lock create unlink open };
+allow user_t xdm_var_lib_t:lnk_file read;
+allow user_t xserver_log_t:file ioctl;
+
+allow avahi_t colord_t:dbus { send_msg };
+allow user_t xdm_t:dbus { send_msg };
+allow user_dbusd_t NetworkManager_t:dbus { send_msg };
+allow NetworkManager_t user_dbusd_t:dbus { send_msg };
+

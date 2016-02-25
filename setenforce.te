@@ -1,0 +1,7 @@
+policy_module(setenforce,1.0.0)
+
+require {
+	type sysadm_t, security_t;
+}
+
+selinux_set_enforce_mode(sysadm_t);
